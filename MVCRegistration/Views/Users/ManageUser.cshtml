@@ -1,0 +1,144 @@
+﻿@model MVCRegistration.BusinessAccess.Factory.ViewModel.UserModel
+
+@{
+    ViewBag.Title = "Create";
+}
+<h2>@(Model.Id == 0 ? "Add" : "Edit") User</h2>
+@using (Html.BeginForm("ManageUser", "Users", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="form-horizontal">
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(m => m.hdnPhotoUrl)
+        @Html.HiddenFor(m => m.Id)
+        <div class="form-group">
+            <label class="control-label col-md-2" for="Firstname">First Name<span style="color:red"> *</span></label>
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Firstname, new { htmlAttributes = new { @class = "form-control", @maxlength = "50" } })
+                @Html.ValidationMessageFor(model => model.Firstname, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2" for="Lastname">Last Name<span style="color:red"> *</span></label>
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Lastname, new { htmlAttributes = new { @class = "form-control", @maxlength = "50" } })
+                @Html.ValidationMessageFor(model => model.Lastname, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2" for="Phone">Phone<span style="color:red"> *</span></label>
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Phone, new { htmlAttributes = new { @class = "form-control", @maxlength = "10" } })
+                @Html.ValidationMessageFor(model => model.Phone, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2" for="EmailId">Email<span style="color:red"> *</span></label>
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.EmailId, new { htmlAttributes = new { @class = "form-control", @maxlength = "50" } })
+                @Html.ValidationMessageFor(model => model.EmailId, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2" for="Gender">Gender<span style="color:red"> *</span></label>
+            <div class="col-md-10">
+                @Html.RadioButtonFor(m => m.Gender, "Male") <label for="Gender">Male</label>
+                @Html.RadioButtonFor(m => m.Gender, "Female") <label for="Gender">Female</label>
+                @Html.ValidationMessageFor(model => model.Gender, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2" for="CountryId">Country<span style="color:red"> *</span></label>
+            <div class="col-md-10">
+                @Html.DropDownList("CountryId", null, htmlAttributes: new { @class = "form-control", @onchange = "FillCity()" })
+                @Html.ValidationMessageFor(model => model.CountryId, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2" for="CityId">City<span style="color:red"> *</span></label>
+            <div class="col-md-10">
+                @Html.DropDownList("CityId", null, htmlAttributes: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.CityId, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2" for="Hobby">Hobby</label>
+            <div class="col-md-10">
+                @Html.ValidationMessageFor(model => model.Hobby, "", new { @class = "text-danger" })
+                @for (int i = 0; i < Model.HobbyList.Count; i++)
+                {
+                    @Html.HiddenFor(x => x.HobbyList[i].Id)
+                    @Html.CheckBoxFor(x => x.HobbyList[i].IsSelected)
+                    @Html.DisplayFor(x => x.HobbyList[i].Name)
+                }
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2" for="PhotoUrl">Image</label>
+            <div class="col-md-4">
+                @Html.EditorFor(model => model.PhotoUrl, new { htmlAttributes = new { @class = "form-control", type = "File", accept = "image/x-png,image/gif,image/jpeg" } })
+                @Html.ValidationMessageFor(model => model.PhotoUrl, "", new { @class = "text-danger" })
+            </div>
+            @if (Model.hdnPhotoUrl != null)
+            {
+                <div class="col-md-6">
+                    <img src="@Url.Content(Model.hdnPhotoUrl)" alt="Image" width="30" height="30" />
+                </div>
+            }
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Save" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script type="text/javascript">
+
+        function FillCity() {
+            var countryId = $('#CountryId').val();
+            $("#CityId").append($('<option></option>').val(0).html("Please Wait..."));
+            $.ajax({
+                url: '/Users/GetCityListByCountry',
+                type: "GET",
+                dataType: "JSON",
+                data: { countryId: countryId },
+                success: function (cities) {
+                    $("#CityId").html(""); // clear before appending new list
+                    $.each(cities, function (i, city) {
+                        $("#CityId").append($('<option></option>').val(city.Value).html(city.Text));
+                    });
+                }
+            });
+        }
+        //We can make this function generic
+        $("#Phone").keydown(function (e) {
+            if ($.inArray(e.keyCode, [46, 8, 9, 27, 13, 110, 190]) !== -1 ||
+                (e.keyCode === 65 && (e.ctrlKey === true || e.metaKey === true)) ||
+                (e.keyCode >= 35 && e.keyCode <= 40)) {
+                return;
+            }
+            if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
+                e.preventDefault();
+            }
+        });
+
+    </script>
+}

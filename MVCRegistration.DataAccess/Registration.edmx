@@ -1,0 +1,375 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="HotelDBModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="ErrorLog">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Type" Type="varchar" MaxLength="20" />
+          <Property Name="FunctionName" Type="varchar" MaxLength="150" />
+          <Property Name="InputData" Type="varchar" MaxLength="500" />
+          <Property Name="OutputData" Type="varchar" MaxLength="500" />
+          <Property Name="UserId" Type="int" />
+          <Property Name="GroupType" Type="varchar" MaxLength="100" />
+          <Property Name="FullErrorDescription" Type="varchar(max)" />
+          <Property Name="CreatedOn" Type="datetime" />
+        </EntityType>
+        <EntityType Name="tblCity">
+          <Key>
+            <PropertyRef Name="CityId" />
+          </Key>
+          <Property Name="CityId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="CityName" Type="varchar" MaxLength="50" />
+          <Property Name="CountryId" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="tblCountry">
+          <Key>
+            <PropertyRef Name="CountryId" />
+          </Key>
+          <Property Name="CountryId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="CountryName" Type="varchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="tblHobby">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nchar" MaxLength="20" Nullable="false" />
+        </EntityType>
+        <EntityType Name="tblUser">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Firstname" Type="varchar" MaxLength="50" />
+          <Property Name="Lastname" Type="varchar" MaxLength="50" />
+          <Property Name="Phone" Type="varchar" MaxLength="10" />
+          <Property Name="EmailId" Type="varchar" MaxLength="50" />
+          <Property Name="CountryId" Type="int" />
+          <Property Name="CityId" Type="int" />
+          <Property Name="Gender" Type="varchar" MaxLength="6" />
+          <Property Name="PhotoUrl" Type="varchar" MaxLength="500" />
+          <Property Name="Hobbies" Type="varchar" MaxLength="50" />
+        </EntityType>
+        <Association Name="FK_tblCity_tblCountry">
+          <End Role="tblCountry" Type="Self.tblCountry" Multiplicity="1" />
+          <End Role="tblCity" Type="Self.tblCity" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tblCountry">
+              <PropertyRef Name="CountryId" />
+            </Principal>
+            <Dependent Role="tblCity">
+              <PropertyRef Name="CountryId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_tblUser_tblCity">
+          <End Role="tblCity" Type="Self.tblCity" Multiplicity="0..1" />
+          <End Role="tblUser" Type="Self.tblUser" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tblCity">
+              <PropertyRef Name="CityId" />
+            </Principal>
+            <Dependent Role="tblUser">
+              <PropertyRef Name="CityId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_tblUser_tblCountry">
+          <End Role="tblCountry" Type="Self.tblCountry" Multiplicity="0..1" />
+          <End Role="tblUser" Type="Self.tblUser" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tblCountry">
+              <PropertyRef Name="CountryId" />
+            </Principal>
+            <Dependent Role="tblUser">
+              <PropertyRef Name="CountryId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Function Name="GetHobbyList" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="UserId" Type="int" Mode="In" />
+        </Function>
+        <Function Name="GetHobbyListByIDForEdit" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="UserId" Type="int" Mode="In" />
+        </Function>
+        <Function Name="LogErrorOccured" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Type" Type="varchar" Mode="In" />
+          <Parameter Name="FunctionName" Type="varchar" Mode="In" />
+          <Parameter Name="InputData" Type="varchar" Mode="In" />
+          <Parameter Name="OutputData" Type="varchar" Mode="In" />
+          <Parameter Name="UserID" Type="int" Mode="In" />
+          <Parameter Name="GroupType" Type="varchar" Mode="In" />
+          <Parameter Name="FullErrorDescription" Type="nvarchar(max)" Mode="In" />
+        </Function>
+        <Function Name="NvarcharToIntList" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="InStr" Type="varchar(max)" Mode="In" />
+          <ReturnType>
+            <CollectionType>
+              <RowType>
+                <Property Name="id" Type="int" Nullable="false" />
+              </RowType>
+            </CollectionType>
+          </ReturnType>
+        </Function>
+        <EntityContainer Name="HotelDBModelStoreContainer">
+          <EntitySet Name="ErrorLog" EntityType="Self.ErrorLog" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tblCity" EntityType="Self.tblCity" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tblCountry" EntityType="Self.tblCountry" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tblHobby" EntityType="Self.tblHobby" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tblUser" EntityType="Self.tblUser" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_tblCity_tblCountry" Association="Self.FK_tblCity_tblCountry">
+            <End Role="tblCountry" EntitySet="tblCountry" />
+            <End Role="tblCity" EntitySet="tblCity" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tblUser_tblCity" Association="Self.FK_tblUser_tblCity">
+            <End Role="tblCity" EntitySet="tblCity" />
+            <End Role="tblUser" EntitySet="tblUser" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tblUser_tblCountry" Association="Self.FK_tblUser_tblCountry">
+            <End Role="tblCountry" EntitySet="tblCountry" />
+            <End Role="tblUser" EntitySet="tblUser" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="HotelDBModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="City">
+          <Key>
+            <PropertyRef Name="CityId" />
+          </Key>
+          <Property Name="CityId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CityName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="CountryId" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="tblCountry" Relationship="Self.FK_tblCity_tblCountry" FromRole="tblCity" ToRole="tblCountry" />
+          <NavigationProperty Name="tblUsers" Relationship="HotelDBModel.FK_tblUser_tblCity" FromRole="City" ToRole="tblUser" />
+        </EntityType>
+        <EntityType Name="Country">
+          <Key>
+            <PropertyRef Name="CountryId" />
+          </Key>
+          <Property Name="CountryId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CountryName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="tblCities" Relationship="Self.FK_tblCity_tblCountry" FromRole="tblCountry" ToRole="tblCity" />
+          <NavigationProperty Name="tblUsers" Relationship="HotelDBModel.FK_tblUser_tblCountry" FromRole="Country" ToRole="tblUser" />
+        </EntityType>
+        <EntityType Name="Hobby">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="20" FixedLength="true" Unicode="true" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_tblCity_tblCountry">
+          <End Role="tblCountry" Type="HotelDBModel.Country" Multiplicity="1" />
+          <End Role="tblCity" Type="HotelDBModel.City" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tblCountry">
+              <PropertyRef Name="CountryId" />
+            </Principal>
+            <Dependent Role="tblCity">
+              <PropertyRef Name="CountryId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="HotelDBEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Cities" EntityType="HotelDBModel.City" />
+          <EntitySet Name="Countries" EntityType="HotelDBModel.Country" />
+          <EntitySet Name="Hobbies" EntityType="HotelDBModel.Hobby" />
+          <AssociationSet Name="FK_tblCity_tblCountry" Association="Self.FK_tblCity_tblCountry">
+            <End Role="tblCountry" EntitySet="Countries" />
+            <End Role="tblCity" EntitySet="Cities" />
+          </AssociationSet>
+          <EntitySet Name="Users" EntityType="HotelDBModel.User" />
+          <AssociationSet Name="FK_tblUser_tblCity" Association="HotelDBModel.FK_tblUser_tblCity">
+            <End Role="City" EntitySet="Cities" />
+            <End Role="tblUser" EntitySet="Users" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tblUser_tblCountry" Association="HotelDBModel.FK_tblUser_tblCountry">
+            <End Role="Country" EntitySet="Countries" />
+            <End Role="tblUser" EntitySet="Users" />
+          </AssociationSet>
+          <FunctionImport Name="NvarcharToIntList" IsComposable="true" ReturnType="Collection(Int32)">
+          <Parameter Name="InStr" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="GetHobbyList" ReturnType="Collection(String)">
+          <Parameter Name="UserId" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="GetHobbyListByIDForEdit" ReturnType="Collection(HotelDBModel.GetHobbyListByIDForEdit_Result)">
+          <Parameter Name="UserId" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <EntitySet Name="ErrorLogs" EntityType="HotelDBModel.ErrorLog" />
+          <FunctionImport Name="LogErrorOccured">
+            <Parameter Name="Type" Mode="In" Type="String" />
+            <Parameter Name="FunctionName" Mode="In" Type="String" />
+            <Parameter Name="InputData" Mode="In" Type="String" />
+            <Parameter Name="OutputData" Mode="In" Type="String" />
+            <Parameter Name="UserID" Mode="In" Type="Int32" />
+            <Parameter Name="GroupType" Mode="In" Type="String" />
+            <Parameter Name="FullErrorDescription" Mode="In" Type="String" />
+          </FunctionImport>
+          </EntityContainer>
+        <EntityType Name="User">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Firstname" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Lastname" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Phone" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="EmailId" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="CountryId" Type="Int32" />
+          <Property Name="CityId" Type="Int32" />
+          <Property Name="Gender" Type="String" MaxLength="6" FixedLength="false" Unicode="false" />
+          <Property Name="PhotoUrl" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="Hobbies" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="tblCity" Relationship="HotelDBModel.FK_tblUser_tblCity" FromRole="tblUser" ToRole="City" />
+          <NavigationProperty Name="tblCountry" Relationship="HotelDBModel.FK_tblUser_tblCountry" FromRole="tblUser" ToRole="Country" />
+        </EntityType>
+        <Association Name="FK_tblUser_tblCity">
+          <End Type="HotelDBModel.City" Role="City" Multiplicity="0..1" />
+          <End Type="HotelDBModel.User" Role="tblUser" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="City">
+              <PropertyRef Name="CityId" />
+            </Principal>
+            <Dependent Role="tblUser">
+              <PropertyRef Name="CityId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_tblUser_tblCountry">
+          <End Type="HotelDBModel.Country" Role="Country" Multiplicity="0..1" />
+          <End Type="HotelDBModel.User" Role="tblUser" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Country">
+              <PropertyRef Name="CountryId" />
+            </Principal>
+            <Dependent Role="tblUser">
+              <PropertyRef Name="CountryId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <ComplexType Name="GetHobbyListByIDForEdit_Result">
+          <Property Type="Int32" Name="ID" Nullable="false" />
+          <Property Type="String" Name="Name" Nullable="false" MaxLength="20" />
+          <Property Type="Boolean" Name="isSelected" Nullable="true" />
+        </ComplexType>
+        <EntityType Name="ErrorLog">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Type" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="FunctionName" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+          <Property Name="InputData" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="OutputData" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="UserId" Type="Int32" />
+          <Property Name="GroupType" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="FullErrorDescription" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="CreatedOn" Type="DateTime" Precision="3" />
+        </EntityType>
+        </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="HotelDBModelStoreContainer" CdmEntityContainer="HotelDBEntities">
+          <EntitySetMapping Name="Cities">
+            <EntityTypeMapping TypeName="HotelDBModel.City">
+              <MappingFragment StoreEntitySet="tblCity">
+                <ScalarProperty Name="CityId" ColumnName="CityId" />
+                <ScalarProperty Name="CityName" ColumnName="CityName" />
+                <ScalarProperty Name="CountryId" ColumnName="CountryId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Countries">
+            <EntityTypeMapping TypeName="HotelDBModel.Country">
+              <MappingFragment StoreEntitySet="tblCountry">
+                <ScalarProperty Name="CountryId" ColumnName="CountryId" />
+                <ScalarProperty Name="CountryName" ColumnName="CountryName" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Hobbies">
+            <EntityTypeMapping TypeName="HotelDBModel.Hobby">
+              <MappingFragment StoreEntitySet="tblHobby">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Users">
+            <EntityTypeMapping TypeName="HotelDBModel.User">
+              <MappingFragment StoreEntitySet="tblUser">
+                <ScalarProperty Name="Hobbies" ColumnName="Hobbies" />
+                <ScalarProperty Name="PhotoUrl" ColumnName="PhotoUrl" />
+                <ScalarProperty Name="Gender" ColumnName="Gender" />
+                <ScalarProperty Name="CityId" ColumnName="CityId" />
+                <ScalarProperty Name="CountryId" ColumnName="CountryId" />
+                <ScalarProperty Name="EmailId" ColumnName="EmailId" />
+                <ScalarProperty Name="Phone" ColumnName="Phone" />
+                <ScalarProperty Name="Lastname" ColumnName="Lastname" />
+                <ScalarProperty Name="Firstname" ColumnName="Firstname" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="NvarcharToIntList" FunctionName="HotelDBModel.Store.NvarcharToIntList" />
+          <FunctionImportMapping FunctionImportName="GetHobbyList" FunctionName="HotelDBModel.Store.GetHobbyList" />
+          <FunctionImportMapping FunctionImportName="GetHobbyListByIDForEdit" FunctionName="HotelDBModel.Store.GetHobbyListByIDForEdit">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="HotelDBModel.GetHobbyListByIDForEdit_Result">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="isSelected" ColumnName="isSelected" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <EntitySetMapping Name="ErrorLogs">
+            <EntityTypeMapping TypeName="HotelDBModel.ErrorLog">
+              <MappingFragment StoreEntitySet="ErrorLog">
+                <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
+                <ScalarProperty Name="FullErrorDescription" ColumnName="FullErrorDescription" />
+                <ScalarProperty Name="GroupType" ColumnName="GroupType" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="OutputData" ColumnName="OutputData" />
+                <ScalarProperty Name="InputData" ColumnName="InputData" />
+                <ScalarProperty Name="FunctionName" ColumnName="FunctionName" />
+                <ScalarProperty Name="Type" ColumnName="Type" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="LogErrorOccured" FunctionName="HotelDBModel.Store.LogErrorOccured" />
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
