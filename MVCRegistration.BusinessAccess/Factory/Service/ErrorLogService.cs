@@ -5,7 +5,6 @@ namespace MVCRegistration.BusinessAccess.Factory.Service
     public class ErrorLogService  
     {
         /// <summary>
-        /// DATED : 11 FEB 2016
         /// To log the error or exception occurred.
         /// </summary>
         /// <param name="Type"></param>

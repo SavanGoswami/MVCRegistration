@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Net;
 using System.Web.Mvc;
-using MVCRegistration.BusinessAccess;
+using MVCRegistration.BusinessAccess.Common;
 using MVCRegistration.BusinessAccess.Factory.IService;
 using MVCRegistration.BusinessAccess.Factory.Service;
 using MVCRegistration.BusinessAccess.Factory.ViewModel;
@@ -10,6 +10,8 @@ using System.Web;
 using System.IO;
 using System.Drawing;
 using System.Collections.Generic;
+using System;
+
 
 namespace MVCRegistration.Controllers
 {
@@ -33,12 +35,30 @@ namespace MVCRegistration.Controllers
 
         #region Methods
         /// <summary>
-        /// Index page display user list
+        /// Index page display user list (Paging , Sorting ,Filtering)
         /// </summary>
         /// <returns></returns>
-        public ActionResult Index()
+        public ActionResult Index(string sortOrder, string currentFilter, string searchString, int? page)
         {
-            return View(_objUserService.GetUserList());
+            ViewBag.CurrentSort = sortOrder;
+            ViewBag.FirstnameSortParm = String.IsNullOrEmpty(sortOrder) ? "Firstname_desc" : "";
+            ViewBag.LastnameSortParm = sortOrder == "Lastname" ? "Lastname_desc" : "Lastname";
+
+
+            if (searchString != null)
+            {
+                page = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+            }
+
+            ViewBag.CurrentFilter = searchString;
+
+            int pageSize = 10;
+            int pageNumber = (page ?? 1);
+            return View(_objUserService.GetUserList(sortOrder, searchString, pageNumber, pageSize));
         }
 
         public ActionResult ManageUser(int? id)
@@ -46,6 +66,11 @@ namespace MVCRegistration.Controllers
             UserModel model = new UserModel();
             if (id != 0)
             {
+                var user = _objUserService.GetUserByID(id ?? 0);
+                if (user.Id == 0)
+                {
+                    return RedirectToAction("Error", "Error");
+                }
                 model = _objUserService.GetUserByID(id ?? 0);
                 ViewBag.CountryId = new SelectList(_objUserService.CountryList(), "Value", "Text", model.CountryId);
                 ViewBag.CityId = new SelectList(_objUserService.GetCityListByCountry(model.CountryId ?? 0), "Value", "Text", model.CityId);
@@ -79,16 +104,22 @@ namespace MVCRegistration.Controllers
                         model.PhotoUrl = "~\\UploadFile\\" + Path.GetFileName(PhotoUrl.FileName);
                     }
                 }
-                 _objUserService.AddEditUser(model);
-                TempData["SuccessMessage"] = "User Has been Added / Updated Succsessfully!";
-                    return RedirectToAction("Index");
+                if (_objUserService.AddEditUser(model))
+                {
+                    TempData["SuccessMessage"] = Messages.UserSaveUpdateFail;
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = Messages.UserSaveUpdateFail;
+                }
+                return RedirectToAction("Index");
             }
             model.HobbyList = _objUserService.GetHobbyList(model.Id);
             ViewBag.CountryId = new SelectList(_objUserService.CountryList(), "Value", "Text", model.CountryId);
             ViewBag.CityId = new SelectList(_objUserService.GetCityListByCountry(model.CountryId ?? 0), "Value", "Text", model.CityId);
             return View(model);
         }
-        
+
         /// <summary>
         /// Delete user
         /// </summary>
@@ -96,11 +127,18 @@ namespace MVCRegistration.Controllers
         /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id)
+        public JsonResult Delete(int id)
         {
-            _objUserService.DeleteUser(id);
-            TempData["SuccessMessage"] = "User Has been Deleted Succsessfully!";
-            return Json(new { status = "success", message = "Record Has been Deleted Succsessfully" }, JsonRequestBehavior.AllowGet);
+            if (_objUserService.DeleteUser(id))
+            {
+                TempData["SuccessMessage"] = Messages.UserDelete;
+                return Json(new { status = SystemEnum.MessageType.success.ToString() }, JsonRequestBehavior.AllowGet);
+            }
+            else
+            {
+                TempData["ErrorMessage"] = Messages.UserDeleteFail;
+                return Json(new { status = SystemEnum.MessageType.danger.ToString() }, JsonRequestBehavior.AllowGet);
+            }
         }
 
         #endregion

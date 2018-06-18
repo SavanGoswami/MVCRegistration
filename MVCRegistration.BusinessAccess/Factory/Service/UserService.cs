@@ -7,13 +7,14 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Web.Mvc;
+using PagedList;
 
 namespace MVCRegistration.BusinessAccess.Factory.Service
 {
     public class UserService : IUserService
     {
         #region CRUD Methods
-        public void AddEditUser(UserModel model)
+        public bool AddEditUser(UserModel model)
         {
             User entity = new User();
             try
@@ -46,41 +47,66 @@ namespace MVCRegistration.BusinessAccess.Factory.Service
                         db.UserRepository.Insert(entity);
                     }
                 }
+                return true;
             }
             catch (Exception ex)
             {
                 string InputData = string.Format(CultureInfo.InvariantCulture, "client_id: {0}", model.Id);
                 ErrorLogService.LogErrorOccured("Error", "AddEditUser", InputData, ex.Message, 0, "UserService", ex.ToString());
+                return false;
             }
         }
 
-        public List<UserModel> GetUserList()
+        public IPagedList<UserModel> GetUserList(string sortOrder, string searchString, int pageNumber, int pageSize)
         {
-            List<UserModel> result = new List<UserModel>();
+            IPagedList<UserModel> res = null;
             try
             {
                 using (UnitOfWork db = new UnitOfWork())
                 {
-                    result = db.UserRepository.GetAll().OrderBy(a => a.Firstname).ToList().ConvertAll(x => new UserModel
+                    var results = db.DB.GetUserList().ToList().ConvertAll(x => new UserModel
                     {
                         Id = x.Id,
                         Firstname = x.Firstname,
                         Lastname = x.Lastname,
                         Phone = x.Phone,
                         EmailId = x.EmailId,
-                        CountryName = db.DB.Countries.Find(x.CountryId).CountryName,
-                        CityName = db.DB.Cities.Find(x.CityId).CityName,
+                        CountryName = x.CountryName,
+                        CityName = x.CityName,
                         Gender = x.Gender,
                         PhotoUrl = x.PhotoUrl,
-                        Hobby =db.DB.GetHobbyList(x.Id).FirstOrDefault()
+                        Hobby = db.DB.GetHobbyList(x.Id).FirstOrDefault()
                     }).ToList();
+
+                    //result by searching (Filtering)
+                    if (!String.IsNullOrEmpty(searchString))
+                    {
+                        results = results.Where(s => s.Firstname.ToLower().Contains(searchString.ToLower())).ToList();
+                    }
+
+                    switch (sortOrder)
+                    {
+                        case "Firstname_desc":
+                            results = results.OrderByDescending(s => s.Firstname).ToList();
+                            break;
+                        case "Lastname":
+                            results = results.OrderBy(s => s.Lastname).ToList();
+                            break;
+                        case "Lastname_desc":
+                            results = results.OrderByDescending(s => s.Lastname).ToList();
+                            break;
+                        default:
+                            results = results.OrderBy(s => s.Firstname).ToList();
+                            break;
+                    }
+                    return results.ToPagedList(pageNumber, pageSize);
                 }
             }
             catch (Exception ex)
             {
                 ErrorLogService.LogErrorOccured("Error", "GetUserList", "", ex.Message, 0, "UserService", ex.ToString());
             }
-            return result;
+            return res;
         }
 
         public UserModel GetUserByID(int id)
@@ -105,6 +131,10 @@ namespace MVCRegistration.BusinessAccess.Factory.Service
                         result.Gender = item.Gender;
                         result.hdnPhotoUrl = item.PhotoUrl;
                     }
+                    else
+                    {
+                        result.Id = 0;
+                    }
                 }
             }
             catch (Exception)
@@ -114,19 +144,21 @@ namespace MVCRegistration.BusinessAccess.Factory.Service
             return result;
         }
 
-        public void DeleteUser(int id)
+        public bool DeleteUser(int id)
         {
             try
             {
                 using (UnitOfWork db = new UnitOfWork())
                 {
                     db.UserRepository.Delete(id);
+                    return true;
                 }
             }
             catch (Exception ex)
             {
                 string InputData = string.Format(CultureInfo.InvariantCulture, "client_id: {0}", id);
                 ErrorLogService.LogErrorOccured("Error", "DeleteUser", InputData, ex.Message, 0, "UserService", ex.ToString());
+                return false;
             }
         }
         #endregion
@@ -227,7 +259,7 @@ namespace MVCRegistration.BusinessAccess.Factory.Service
                      {
                          Id = n.ID,
                          Name = n.Name,
-                         IsSelected = n.isSelected??false
+                         IsSelected = n.isSelected ?? false
                      }).ToList();
                     }
                 }

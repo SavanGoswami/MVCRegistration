@@ -93,5 +93,10 @@ namespace MVCRegistration.DataAccess
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("LogErrorOccured", typeParameter, functionNameParameter, inputDataParameter, outputDataParameter, userIDParameter, groupTypeParameter, fullErrorDescriptionParameter);
         }
+    
+        public virtual ObjectResult<GetUserList_Result> GetUserList()
+        {
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetUserList_Result>("GetUserList");
+        }
     }
 }

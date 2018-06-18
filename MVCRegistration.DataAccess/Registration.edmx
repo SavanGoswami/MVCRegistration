@@ -49,7 +49,7 @@
           <Property Name="Firstname" Type="varchar" MaxLength="50" />
           <Property Name="Lastname" Type="varchar" MaxLength="50" />
           <Property Name="Phone" Type="varchar" MaxLength="10" />
-          <Property Name="EmailId" Type="varchar" MaxLength="50" />
+          <Property Name="EmailId" Type="varchar" MaxLength="100" />
           <Property Name="CountryId" Type="int" />
           <Property Name="CityId" Type="int" />
           <Property Name="Gender" Type="varchar" MaxLength="6" />
@@ -98,6 +98,7 @@
         <Function Name="GetHobbyListByIDForEdit" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="UserId" Type="int" Mode="In" />
         </Function>
+        <Function Name="GetUserList" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
         <Function Name="LogErrorOccured" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="Type" Type="varchar" Mode="In" />
           <Parameter Name="FunctionName" Type="varchar" Mode="In" />
@@ -214,6 +215,7 @@
             <Parameter Name="GroupType" Mode="In" Type="String" />
             <Parameter Name="FullErrorDescription" Mode="In" Type="String" />
           </FunctionImport>
+          <FunctionImport Name="GetUserList" ReturnType="Collection(HotelDBModel.GetUserList_Result)" />
           </EntityContainer>
         <EntityType Name="User">
           <Key>
@@ -223,7 +225,7 @@
           <Property Name="Firstname" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="Lastname" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="Phone" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
-          <Property Name="EmailId" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="EmailId" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="CountryId" Type="Int32" />
           <Property Name="CityId" Type="Int32" />
           <Property Name="Gender" Type="String" MaxLength="6" FixedLength="false" Unicode="false" />
@@ -275,6 +277,20 @@
           <Property Name="FullErrorDescription" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="CreatedOn" Type="DateTime" Precision="3" />
         </EntityType>
+        <ComplexType Name="GetUserList_Result">
+          <Property Type="Int32" Name="Id" Nullable="false" />
+          <Property Type="String" Name="Firstname" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="Lastname" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="Phone" Nullable="true" MaxLength="10" />
+          <Property Type="String" Name="EmailId" Nullable="true" MaxLength="100" />
+          <Property Type="Int32" Name="CountryId" Nullable="true" />
+          <Property Type="Int32" Name="CityId" Nullable="true" />
+          <Property Type="String" Name="Gender" Nullable="true" MaxLength="6" />
+          <Property Type="String" Name="PhotoUrl" Nullable="true" MaxLength="500" />
+          <Property Type="String" Name="Hobbies" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="CountryName" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="CityName" Nullable="true" MaxLength="50" />
+        </ComplexType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -349,6 +365,24 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <FunctionImportMapping FunctionImportName="LogErrorOccured" FunctionName="HotelDBModel.Store.LogErrorOccured" />
+          <FunctionImportMapping FunctionImportName="GetUserList" FunctionName="HotelDBModel.Store.GetUserList">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="HotelDBModel.GetUserList_Result">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Firstname" ColumnName="Firstname" />
+                <ScalarProperty Name="Lastname" ColumnName="Lastname" />
+                <ScalarProperty Name="Phone" ColumnName="Phone" />
+                <ScalarProperty Name="EmailId" ColumnName="EmailId" />
+                <ScalarProperty Name="CountryId" ColumnName="CountryId" />
+                <ScalarProperty Name="CityId" ColumnName="CityId" />
+                <ScalarProperty Name="Gender" ColumnName="Gender" />
+                <ScalarProperty Name="PhotoUrl" ColumnName="PhotoUrl" />
+                <ScalarProperty Name="Hobbies" ColumnName="Hobbies" />
+                <ScalarProperty Name="CountryName" ColumnName="CountryName" />
+                <ScalarProperty Name="CityName" ColumnName="CityName" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

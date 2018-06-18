@@ -61,6 +61,9 @@
     <Compile Include="GetHobbyListByIDForEdit_Result.cs">
       <DependentUpon>Registration.tt</DependentUpon>
     </Compile>
+    <Compile Include="GetUserList_Result.cs">
+      <DependentUpon>Registration.tt</DependentUpon>
+    </Compile>
     <Compile Include="Hobby.cs">
       <DependentUpon>Registration.tt</DependentUpon>
     </Compile>

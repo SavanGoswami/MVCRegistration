@@ -13,7 +13,7 @@
         @Html.HiddenFor(m => m.hdnPhotoUrl)
         @Html.HiddenFor(m => m.Id)
         <div class="form-group">
-            <label class="control-label col-md-2" for="Firstname">First Name<span style="color:red"> *</span></label>
+            <label class="control-label col-md-2" for="Firstname">First Name<span class="cfont"> *</span></label>
             <div class="col-md-10">
                 @Html.EditorFor(model => model.Firstname, new { htmlAttributes = new { @class = "form-control", @maxlength = "50" } })
                 @Html.ValidationMessageFor(model => model.Firstname, "", new { @class = "text-danger" })
@@ -21,7 +21,7 @@
         </div>
 
         <div class="form-group">
-            <label class="control-label col-md-2" for="Lastname">Last Name<span style="color:red"> *</span></label>
+            <label class="control-label col-md-2" for="Lastname">Last Name<span class="cfont"> *</span></label>
             <div class="col-md-10">
                 @Html.EditorFor(model => model.Lastname, new { htmlAttributes = new { @class = "form-control", @maxlength = "50" } })
                 @Html.ValidationMessageFor(model => model.Lastname, "", new { @class = "text-danger" })
@@ -29,7 +29,7 @@
         </div>
 
         <div class="form-group">
-            <label class="control-label col-md-2" for="Phone">Phone<span style="color:red"> *</span></label>
+            <label class="control-label col-md-2" for="Phone">Phone<span class="cfont"> *</span></label>
             <div class="col-md-10">
                 @Html.EditorFor(model => model.Phone, new { htmlAttributes = new { @class = "form-control", @maxlength = "10" } })
                 @Html.ValidationMessageFor(model => model.Phone, "", new { @class = "text-danger" })
@@ -37,15 +37,15 @@
         </div>
 
         <div class="form-group">
-            <label class="control-label col-md-2" for="EmailId">Email<span style="color:red"> *</span></label>
+            <label class="control-label col-md-2" for="EmailId">Email<span class="cfont"> *</span></label>
             <div class="col-md-10">
-                @Html.EditorFor(model => model.EmailId, new { htmlAttributes = new { @class = "form-control", @maxlength = "50" } })
+                @Html.EditorFor(model => model.EmailId, new { htmlAttributes = new { @class = "form-control", @maxlength = "100" } })
                 @Html.ValidationMessageFor(model => model.EmailId, "", new { @class = "text-danger" })
             </div>
         </div>
 
         <div class="form-group">
-            <label class="control-label col-md-2" for="Gender">Gender<span style="color:red"> *</span></label>
+            <label class="control-label col-md-2" for="Gender">Gender<span class="cfont"> *</span></label>
             <div class="col-md-10">
                 @Html.RadioButtonFor(m => m.Gender, "Male") <label for="Gender">Male</label>
                 @Html.RadioButtonFor(m => m.Gender, "Female") <label for="Gender">Female</label>
@@ -54,17 +54,17 @@
         </div>
 
         <div class="form-group">
-            <label class="control-label col-md-2" for="CountryId">Country<span style="color:red"> *</span></label>
+            <label class="control-label col-md-2" for="CountryId">Country<span class="cfont"> *</span></label>
             <div class="col-md-10">
-                @Html.DropDownList("CountryId", null, htmlAttributes: new { @class = "form-control", @onchange = "FillCity()" })
+                @Html.DropDownListFor(m=>m.CountryId, null, htmlAttributes: new { @class = "form-control", @onchange = "FillCity()" })
                 @Html.ValidationMessageFor(model => model.CountryId, "", new { @class = "text-danger" })
             </div>
         </div>
 
         <div class="form-group">
-            <label class="control-label col-md-2" for="CityId">City<span style="color:red"> *</span></label>
+            <label class="control-label col-md-2" for="CityId">City<span class="cfont"> *</span></label>
             <div class="col-md-10">
-                @Html.DropDownList("CityId", null, htmlAttributes: new { @class = "form-control" })
+                @Html.DropDownListFor(m=>m.CityId, null, htmlAttributes: new { @class = "form-control" })
                 @Html.ValidationMessageFor(model => model.CityId, "", new { @class = "text-danger" })
             </div>
         </div>

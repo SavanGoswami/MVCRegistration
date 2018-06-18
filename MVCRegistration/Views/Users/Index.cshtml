@@ -1,110 +1,147 @@
-﻿@model IEnumerable<MVCRegistration.BusinessAccess.Factory.ViewModel.UserModel>
+﻿@*@model IEnumerable<MVCRegistration.BusinessAccess.Factory.ViewModel.UserModel>*@
+@using MVCRegistration.BusinessAccess.Common
+@using PagedList.Mvc
+@model PagedList.IPagedList<MVCRegistration.BusinessAccess.Factory.ViewModel.UserModel>
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
 
 @{
     ViewBag.Title = "Index";
 }
-<h2>User List</h2>
+<br>
 <p>
     @Html.ActionLink("Create New", "ManageUser", new { id = 0 })
     @Html.AntiForgeryToken()
 </p>
+
+@using (Html.BeginForm("Index", "Users", FormMethod.Get, new { id = "frmSearchByName" }))
+{
+    <p>
+        Find by name: @Html.TextBox("SearchString", ViewBag.CurrentFilter as string)
+    </p>
+}
 <table class="table table-hover table-bordered table-striped">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.PhotoUrl)
+            Photo
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Firstname)
+            @Html.ActionLink("First Name", "Index", new { sortOrder = ViewBag.FirstnameSortParm, SearchString = ViewBag.CurrentFilter })
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Lastname)
+            @Html.ActionLink("Last Name", "Index", new { sortOrder = ViewBag.LastnameSortParm, SearchString = ViewBag.CurrentFilter })
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Phone)
+            Phone
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.EmailId)
+            Email
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Gender)
+            Gender
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.CountryName)
+            Country
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.CityName)
+            City
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Hobby)
+            Hobby
         </th>
         <th>
             Action
         </th>
     </tr>
-
-    @foreach (var item in Model)
+    @if (Model.Count() != 0)
+    {
+        foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    <img src="@Url.Content(@item.PhotoUrl ?? "~\\UploadFile\\blank.png")" alt="Image" width="25" height="25" />
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Firstname)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Lastname)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Phone)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.EmailId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Gender)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CountryName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CityName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Hobby)
+                </td>
+                <td>
+                    <a href="@Url.Action("ManageUser", "Users")/?id=@item.Id" title="Edit"><img src="@Url.Content("~/images/ic-edit.png")" alt=""></a>
+                    <a href="javascript:void(0);" onclick="deleteuserDetail(@item.Id)" class="delete" title="Delete"><img alt="" src="@Url.Content("~/images/ic-delete.png")"></a>
+                </td>
+            </tr>
+        }
+    }
+    else
     {
         <tr>
-            <td>
-                <img src="@Url.Content(@item.PhotoUrl ?? "~\\UploadFile\\blank.png")" alt="Image" width="25" height="25" />
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Firstname)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Lastname)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Phone)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.EmailId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Gender)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CountryName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CityName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Hobby)
-            </td>
-            <td>
-                <a href="@Url.Action("ManageUser", "Users")/?id=@item.Id" title="Edit"><img src="@Url.Content("~/images/ic-edit.png")" alt=""></a>
-                <a href="javascript:void(0);" onclick="deleteuserDetail(@item.Id)" class="delete" title="Delete"><img alt="" src="@Url.Content("~/images/ic-delete.png")"></a>
-            </td>
+            <td colspan="11" align="center">No data Available</td>
         </tr>
     }
 </table>
 
-<script>
+<br />
+Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+@Html.PagedListPager(Model, page => Url.Action("Index", new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }))
+
+<script type="text/javascript">
+
+    (function ($) {
+        $.fn.setCursorToTextEnd = function () {
+            $initialVal = this.val();
+            this.val($initialVal + ' ');
+            this.val($initialVal);
+        };
+    })(jQuery);
+
+    $(document).ready(function () {
+        if ($('#SearchString').val() != '')
+        {
+            $('#SearchString').focus();
+            $('#SearchString').setCursorToTextEnd();
+        }
+    });
+
     function deleteuserDetail(id) {
             bootbox.dialog(
             {
-                message: 'Are you sure you want to delete?',
-                title: 'Confirmation',
+              message: '@Messages.DeleteConfirn',
+                title: '@Messages.titleConfirmation',
                 buttons: {
                     success: {
-                        label: "Ok",
-                        className: "btn btn-primary",
+                        label: "Delete",
+                        className: "btn btn-success",
                         callback: function (result) {
                             if (result) {
                                 $.ajax({
                                     type: "POST",
                                     url: encodeURI('@Url.Action("Delete", "Users")'),
-                                    data: { "id": id,  __RequestVerificationToken: $('input[name=__RequestVerificationToken]').val()},
+                                    data: { "id": id, __RequestVerificationToken: $('input[name=__RequestVerificationToken]').val() },
                                     cache: false,
-
                                     success: function (data, textStatus, XMLHttpRequest) {
-                                        if(data.status == 'success')
-                                            ShowMessage(data.status, data.message);
-                                        window.location.href = "/Users/Index";
+                                        location = location.href;
                                     },
                                     error: function (jqXHR, exception) {
-                                        ShowMessage('danger');
+                                        ShowMessage('@SystemEnum.MessageType.danger.ToString()', '@Messages.error');
                                     }
                                 });
                             }
@@ -120,5 +157,11 @@
                 }
             }
         );
-        }
+    }
+
+    //Ajax Call also a good option here!
+    $('#SearchString').keyup(function () {
+        $('#frmSearchByName').submit();
+    });
+
 </script>

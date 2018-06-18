@@ -21,19 +21,6 @@ namespace MVCRegistration.BusinessAccess.Generic
                 return _User;
             }
         }
-
-        public GenericUnit<ErrorLog> ErrorLogRepository
-        {
-            get
-            {
-                if (this._ErrorLog == null)
-                {
-                    this._ErrorLog = new GenericUnit<ErrorLog>(DB);
-                }
-                return _ErrorLog;
-            }
-        }
-
         #endregion
     }
 }
