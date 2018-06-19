@@ -56,7 +56,7 @@ namespace MVCRegistration.BusinessAccess.Factory.Service
                 return false;
             }
         }
-
+       
         public IPagedList<UserModel> GetUserList(string sortOrder, string searchString, int pageNumber, int pageSize)
         {
             IPagedList<UserModel> res = null;
@@ -64,6 +64,7 @@ namespace MVCRegistration.BusinessAccess.Factory.Service
             {
                 using (UnitOfWork db = new UnitOfWork())
                 {
+                    //1.All records as result
                     var results = db.DB.GetUserList().ToList().ConvertAll(x => new UserModel
                     {
                         Id = x.Id,
@@ -78,12 +79,13 @@ namespace MVCRegistration.BusinessAccess.Factory.Service
                         Hobby = db.DB.GetHobbyList(x.Id).FirstOrDefault()
                     }).ToList();
 
-                    //result by searching (Filtering)
+                    //2.result by searching (Filtering)
                     if (!String.IsNullOrEmpty(searchString))
                     {
                         results = results.Where(s => s.Firstname.ToLower().Contains(searchString.ToLower())).ToList();
                     }
 
+                    //3.result by Sorting 
                     switch (sortOrder)
                     {
                         case "Firstname_desc":
@@ -100,6 +102,8 @@ namespace MVCRegistration.BusinessAccess.Factory.Service
                             break;
                     }
                     return results.ToPagedList(pageNumber, pageSize);
+
+                    //TO DO - Make sp for fatching only filtered result
                 }
             }
             catch (Exception ex)
