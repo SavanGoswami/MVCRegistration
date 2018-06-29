@@ -146,7 +146,7 @@ namespace MVCRegistration.Controllers
 
         #region HelperMethod
         /// <summary>
-        /// Method use to save images/ files
+        /// Method use to save files
         /// </summary>
         /// <param name="PhotoUrl"></param>
         /// <returns></returns>
