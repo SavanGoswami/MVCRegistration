@@ -1,6 +1,4 @@
-﻿using System.Data.Entity;
-using System.Linq;
-using System.Net;
+﻿using System.Linq;
 using System.Web.Mvc;
 using MVCRegistration.BusinessAccess.Common;
 using MVCRegistration.BusinessAccess.Factory.IService;
@@ -8,8 +6,6 @@ using MVCRegistration.BusinessAccess.Factory.Service;
 using MVCRegistration.BusinessAccess.Factory.ViewModel;
 using System.Web;
 using System.IO;
-using System.Drawing;
-using System.Collections.Generic;
 using System;
 
 
