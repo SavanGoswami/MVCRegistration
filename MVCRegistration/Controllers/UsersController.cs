@@ -61,6 +61,11 @@ namespace MVCRegistration.Controllers
             return View(_objUserService.GetUserList(sortOrder, searchString, pageNumber, pageSize));
         }
 
+        /// <summary>
+        /// Get user detail by id for editing the details
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public ActionResult ManageUser(int? id)
         {
             UserModel model = new UserModel();
@@ -86,7 +91,7 @@ namespace MVCRegistration.Controllers
         }
 
         /// <summary>
-        /// Save / Update user
+        /// Insert / Update user details
         /// </summary>
         /// <param name="model"></param>
         /// <param name="PhotoUrl"></param>
@@ -144,6 +149,11 @@ namespace MVCRegistration.Controllers
         #endregion
 
         #region HelperMethod
+        /// <summary>
+        /// Method use to save images/ files
+        /// </summary>
+        /// <param name="PhotoUrl"></param>
+        /// <returns></returns>
         public bool SaveFile(HttpPostedFileBase PhotoUrl)
         {
             try
@@ -165,12 +175,21 @@ namespace MVCRegistration.Controllers
             }
         }
 
+        /// <summary>
+        /// Use to fill city dropdpwn accordingly country
+        /// </summary>
+        /// <param name="countryId"></param>
+        /// <returns></returns>
         public ActionResult GetCityListByCountry(int? countryId)
         {
             var cities = _objUserService.GetCityListByCountry(countryId ?? 0);
             return Json(cities, JsonRequestBehavior.AllowGet);
         }
 
+        /// <summary>
+        /// This is error page for any kind of exception occured
+        /// </summary>
+        /// <returns></returns>
         [AllowAnonymous]
         public ActionResult Error()
         {
