@@ -1,0 +1,23 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+
+namespace Transaction_History.Models
+{
+    public class UserModel
+    {
+        public int Id { get; set; }
+        public List<Transactions>  lstTransaction { get; set; }
+        public List<SelectListItem> UserList { get; set; }
+
+    }
+
+    public class Transactions
+    {
+        public int Credit { get; set; }
+        public int Debit { get; set; }
+        public int ClosingBalance { get; set; }
+    }
+}
