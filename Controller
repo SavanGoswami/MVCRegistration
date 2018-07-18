@@ -1,0 +1,68 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using Transaction_History.Models;
+
+namespace Transaction_History.Controllers
+{
+    public class HomeController : Controller
+    {
+        HotelDBEntities context = new HotelDBEntities();
+
+        // GET: Home
+        public ActionResult Index()
+        {
+            UserModel model = new UserModel();
+            model.UserList = GetUserList();
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult Index(UserModel model)
+        {
+            model.UserList = GetUserList();
+            model.lstTransaction = GetTransactionListByUser(model.Id);
+            return View(model);
+        }
+
+        private List<SelectListItem> GetUserList()
+        {
+            List<SelectListItem> Users = new List<SelectListItem>();
+
+            Users = context.Users.AsNoTracking()
+                .OrderBy(n => n.UserID)
+                    .Select(n =>
+                    new SelectListItem
+                    {
+                        Value = n.UserID.ToString(),
+                        Text = n.Name
+                    }).ToList();
+            var Usertip = new SelectListItem()
+            {
+                Value = null,
+                Text = "select user"
+            };
+            return Users;
+
+        }
+
+        private List<Transactions> GetTransactionListByUser(int UserId)
+        {
+            List<Transactions> lst = new List<Transactions>();
+
+            lst = context.GetTransactionHystoryByID(UserId).Select(n =>
+            new Transactions
+            {
+                Credit = n.Credit?? 0,
+                Debit = n.Debit ?? 0,
+                ClosingBalance = n.ClosingBalance ?? 0
+            }
+            ).ToList();
+            return lst;
+
+        }
+
+    }
+}
