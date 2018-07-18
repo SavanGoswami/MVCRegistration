@@ -1,0 +1,49 @@
+@model Transaction_History.Models.UserModel
+@{
+    ViewBag.Title = "Index";
+}
+<div class="container">
+   <div class="row" style="margin-top:10px">
+       @using (Html.BeginForm("Index", "Home", FormMethod.Post))
+       {
+           <div class="col-md-4">
+               <div class="form-group">
+                   @Html.Label("Select User : ")
+                   @Html.DropDownListFor(m => m.Id, Model.UserList)
+               </div>
+           </div>
+
+           <div class="col-md-4">
+               <div class="form-group">
+                   <input type="submit" value="Submit" />
+               </div>
+           </div>
+       }
+   </div>
+
+    <table class="table table-bordered table-responsive table-hover">
+        <tr>
+            <th>Credit </th>
+            <th>Debit</th>
+            <th>Closing Balance</th>
+        </tr>
+        @if (Model.lstTransaction != null)
+        {
+            foreach (var d in Model.lstTransaction)
+            {
+                <tr>
+                    <td>@d.Credit</td>
+                    <td>@d.Debit</td>
+                    <td>@d.ClosingBalance</td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="2">No record to display</td>
+            </tr>
+        }
+
+    </table> 
+</div>
