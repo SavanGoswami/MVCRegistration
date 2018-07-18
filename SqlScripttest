@@ -1,33 +1,11 @@
-USE [TestDemo]
+USE [HotelDB]
 GO
-/****** Object:  Table [dbo].[Users]    Script Date: 07/18/2018 08:32:48 ******/
+/****** Object:  Table [Transactions]    Script Date: 18-07-2018 13:19:55 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-SET ANSI_PADDING ON
-GO
-CREATE TABLE [dbo].[Users](
-	[UserID] [int] IDENTITY(1,1) NOT NULL,
-	[Name] [varchar](50) NULL,
- CONSTRAINT [PK_Users] PRIMARY KEY CLUSTERED 
-(
-	[UserID] ASC
-)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
-) ON [PRIMARY]
-GO
-SET ANSI_PADDING OFF
-GO
-SET IDENTITY_INSERT [dbo].[Users] ON
-INSERT [dbo].[Users] ([UserID], [Name]) VALUES (1, N'Savan')
-INSERT [dbo].[Users] ([UserID], [Name]) VALUES (2, N'Bhaumik')
-SET IDENTITY_INSERT [dbo].[Users] OFF
-/****** Object:  Table [dbo].[Transactions]    Script Date: 07/18/2018 08:32:48 ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[Transactions](
+CREATE TABLE [Transactions](
 	[ID] [int] IDENTITY(1,1) NOT NULL,
 	[UserID] [int] NOT NULL,
 	[Amount] [int] NULL,
@@ -35,25 +13,66 @@ CREATE TABLE [dbo].[Transactions](
  CONSTRAINT [PK_Transactions] PRIMARY KEY CLUSTERED 
 (
 	[ID] ASC
-)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
+
 GO
-SET IDENTITY_INSERT [dbo].[Transactions] ON
-INSERT [dbo].[Transactions] ([ID], [UserID], [Amount], [Date]) VALUES (1, 1, 100, CAST(0x0000A92000000000 AS DateTime))
-INSERT [dbo].[Transactions] ([ID], [UserID], [Amount], [Date]) VALUES (2, 1, 50, CAST(0x0000A92100000000 AS DateTime))
-INSERT [dbo].[Transactions] ([ID], [UserID], [Amount], [Date]) VALUES (3, 1, -50, CAST(0x0000A92200000000 AS DateTime))
-INSERT [dbo].[Transactions] ([ID], [UserID], [Amount], [Date]) VALUES (5, 1, 20, CAST(0x0000A92300000000 AS DateTime))
-INSERT [dbo].[Transactions] ([ID], [UserID], [Amount], [Date]) VALUES (6, 2, 120, CAST(0x0000A92200000000 AS DateTime))
-INSERT [dbo].[Transactions] ([ID], [UserID], [Amount], [Date]) VALUES (7, 1, 10, CAST(0x0000A92200000000 AS DateTime))
-INSERT [dbo].[Transactions] ([ID], [UserID], [Amount], [Date]) VALUES (8, 2, -50, CAST(0x0000A92200000000 AS DateTime))
-INSERT [dbo].[Transactions] ([ID], [UserID], [Amount], [Date]) VALUES (9, 2, 50, CAST(0x0000A92200000000 AS DateTime))
-SET IDENTITY_INSERT [dbo].[Transactions] OFF
-/****** Object:  StoredProcedure [dbo].[GetTransactionHystoryByID]    Script Date: 07/18/2018 08:32:44 ******/
+/****** Object:  Table [Users]    Script Date: 18-07-2018 13:19:55 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[GetTransactionHystoryByID]
+CREATE TABLE [Users](
+	[UserID] [int] IDENTITY(1,1) NOT NULL,
+	[Name] [varchar](50) NULL,
+ CONSTRAINT [PK_Users] PRIMARY KEY CLUSTERED 
+(
+	[UserID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+SET IDENTITY_INSERT [Transactions] ON 
+
+GO
+INSERT [Transactions] ([ID], [UserID], [Amount], [Date]) VALUES (1, 1, 100, CAST(N'2018-07-17T00:00:00.000' AS DateTime))
+GO
+INSERT [Transactions] ([ID], [UserID], [Amount], [Date]) VALUES (2, 1, 50, CAST(N'2018-07-18T00:00:00.000' AS DateTime))
+GO
+INSERT [Transactions] ([ID], [UserID], [Amount], [Date]) VALUES (3, 1, -50, CAST(N'2018-07-19T00:00:00.000' AS DateTime))
+GO
+INSERT [Transactions] ([ID], [UserID], [Amount], [Date]) VALUES (5, 1, 20, CAST(N'2018-07-20T00:00:00.000' AS DateTime))
+GO
+INSERT [Transactions] ([ID], [UserID], [Amount], [Date]) VALUES (6, 2, 120, CAST(N'2018-07-19T00:00:00.000' AS DateTime))
+GO
+INSERT [Transactions] ([ID], [UserID], [Amount], [Date]) VALUES (7, 1, 10, CAST(N'2018-07-19T00:00:00.000' AS DateTime))
+GO
+INSERT [Transactions] ([ID], [UserID], [Amount], [Date]) VALUES (8, 2, -50, CAST(N'2018-07-19T00:00:00.000' AS DateTime))
+GO
+INSERT [Transactions] ([ID], [UserID], [Amount], [Date]) VALUES (9, 2, 50, CAST(N'2018-07-19T00:00:00.000' AS DateTime))
+GO
+SET IDENTITY_INSERT [Transactions] OFF
+GO
+SET IDENTITY_INSERT [Users] ON 
+
+GO
+INSERT [Users] ([UserID], [Name]) VALUES (1, N'Savan')
+GO
+INSERT [Users] ([UserID], [Name]) VALUES (2, N'Bhaumik')
+GO
+SET IDENTITY_INSERT [Users] OFF
+GO
+ALTER TABLE [Transactions]  WITH CHECK ADD  CONSTRAINT [FK_Transactions_Users] FOREIGN KEY([UserID])
+REFERENCES [Users] ([UserID])
+GO
+ALTER TABLE [Transactions] CHECK CONSTRAINT [FK_Transactions_Users]
+GO
+/****** Object:  StoredProcedure [GetTransactionHystoryByID]    Script Date: 18-07-2018 13:19:55 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [GetTransactionHystoryByID]
 	-- Add the parameters for the stored procedure here
 	@UserID int
 AS
@@ -62,15 +81,11 @@ BEGIN
 	SET NOCOUNT ON;
 
  
-	select ID, Amount,
-(select sum(t2.Amount) from Transactions t2 where t2.ID <= t1.ID And UserID = @UserID ) 
-as ClosingBalance
+select ID ,
+iif(amount>0, amount, 0) as Credit, 
+iif(amount<0, amount*-1, 0) as Debit, 
+(select sum(t2.Amount) from Transactions t2 where t2.ID <= t1.ID And UserID = @UserID ) as ClosingBalance
 from Transactions t1 where UserID = @UserID
 END
-GO
-/****** Object:  ForeignKey [FK_Transactions_Users]    Script Date: 07/18/2018 08:32:48 ******/
-ALTER TABLE [dbo].[Transactions]  WITH CHECK ADD  CONSTRAINT [FK_Transactions_Users] FOREIGN KEY([UserID])
-REFERENCES [dbo].[Users] ([UserID])
-GO
-ALTER TABLE [dbo].[Transactions] CHECK CONSTRAINT [FK_Transactions_Users]
+
 GO
