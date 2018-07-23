@@ -10,3 +10,13 @@ WHERE   RowNum > (@PageNum * @PageSize)
 ORDER BY RowNum
 
 
+Declare @Start int  = 112 ,
+@Count  int =10 
+ 
+
+SELECT  *
+FROM    ( SELECT    ROW_NUMBER() OVER ( ORDER BY first_name ) AS RowNum, * FROM MOCK_DATA
+        ) AS RowConstrainedResult
+WHERE   RowNum >= @Start
+    AND RowNum <= @Start + @Count
+ORDER BY RowNum
