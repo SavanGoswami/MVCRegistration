@@ -1,0 +1,12 @@
+Declare @PageNum int  = 3 ,
+@PageSize int =20 
+ 
+
+SELECT  *
+FROM    ( SELECT    ROW_NUMBER() OVER ( ORDER BY id ) AS RowNum, * FROM      MOCK_DATA
+        ) AS RowConstrainedResult
+WHERE   RowNum > (@PageNum * @PageSize)
+    AND RowNum <= (@PageNum * @PageSize)+@PageSize
+ORDER BY RowNum
+
+
