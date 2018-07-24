@@ -1,3 +1,5 @@
+========1
+
 Declare @PageNum int  = 3 ,
 @PageSize int =20 
  
@@ -10,6 +12,7 @@ WHERE   RowNum > (@PageNum * @PageSize)
 ORDER BY RowNum
 
 
+========2
 Declare @Start int  = 112 ,
 @Count  int =10 
  
@@ -20,3 +23,9 @@ FROM    ( SELECT    ROW_NUMBER() OVER ( ORDER BY first_name ) AS RowNum, * FROM 
 WHERE   RowNum >= @Start
     AND RowNum <= @Start + @Count
 ORDER BY RowNum
+
+
+========3
+SELECT * FROM MOCK_DATA ORDER BY  (ID )
+OFFSET 10 ROWS   -- REMOVE FIRST TEN ROW
+FETCH NEXT 10 ROWS ONLY -- FETCH NEXT SOME ROWS
