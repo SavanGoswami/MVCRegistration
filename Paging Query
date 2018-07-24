@@ -29,3 +29,24 @@ ORDER BY RowNum
 SELECT * FROM MOCK_DATA ORDER BY  (ID )
 OFFSET 10 ROWS   -- REMOVE FIRST TEN ROW
 FETCH NEXT 10 ROWS ONLY -- FETCH NEXT SOME ROWS
+
+
+
+=========4
+--paging
+Declare @PageNum int  = 1 ,
+@PageSize int =100 ,
+--sorting
+@SortExpression varchar(max) = 'firstname',
+@SortDirection varchar(max) = 'desc',
+--Searching
+@SearchByName varchar(max) = 'elig'
+SELECT  *
+FROM    ( SELECT ROW_NUMBER() OVER (ORDER BY 
+				CASE WHEN @SortExpression = 'firstname' and @SortDirection ='desc'  THEN first_name END DESC, 
+				CASE WHEN @SortExpression = 'firstname' THEN first_name END ASC,
+				CASE WHEN @SortExpression = 'lastname' and @SortDirection ='desc'  THEN last_name END DESC, 
+				CASE WHEN @SortExpression = 'lasttname' THEN last_name END ASC
+		) AS RowNum, * FROM MOCK_DATA where first_name like '%'+ IsNull(@SearchByName,'')+'%') AS RowConstrainedResult 
+		WHERE   RowNum > (@PageNum -1) * (@PageSize) AND RowNum <= (@PageNum -1) * (@PageSize)+@PageSize
+ 
