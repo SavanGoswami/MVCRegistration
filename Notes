@@ -1,0 +1,110 @@
+Stored Procedure
+User Define Function
+View
+Index
+Trigger
+Cursor
+Joins
+
+----Single column same data
+SELECT * FROM tblSampleUser WHERE (Salary IN (SELECT Salary
+FROM tblSampleUser GROUP BY Salary HAVING COUNT(Salary) > 1)) order by Salary
+
+
+---Every Coloum same data
+
+
+
+------Points
+OOPS
+Class
+Object
+
+1)ENCAPSULATION - 'Encapsulation is defined 'as the process of enclosing one or more items within a physical or logical package'
+				'Encapsulation is the procedure of covering up of data and functions into a single unit (called class).'
+				Ways to achieve encapsulation
+				1)By using the get and set methods (Accessors and Mutators)
+				2)By using properties (read only properties, write only properties)
+
+2)ABSTARCTION				
+3)INHERITANCE
+4)POLYMORPHISM (overloading ( compiletime polymorphism , static binding) , overriding ( runtime polymorphism , dynamic binding))
+
+
+
+
+				
+------Notes
+clases have 'internal' accsess modifier by default (which are acccesible in same namespace (collection of class)) 
+fields/methods have 'priavate' accsess modifier by default (which are acccesible in same class (collection of fields and methods))
+
+we can not create instance of abstract class
+Not nacessery to have abstract method in abstarct class (vice versa is not true)
+For utilizing abstarct  class we need to inherit that class and define the abstract method and use that by that child method
+
+
+Lifecycle
+
+Filters In MVC
+	Authorization filters – Implements the IAuthorizationFilter attribute.
+	Action filters – Implements the IActionFilter attribute.
+	Result filters – Implements the IResultFilter attribute.
+	Exception filters – Implements the IExceptionFilter attribute.
+	
+Model/DTO/ViewModel  Class -->  POCO/Enity/Autogenrated class (Mapping)
+
+
+Solution
+  -- Common
+       - Shared features used accross all layers
+       - You can also place interfaces for repositories and UOW here
+  -- Entities - shared among DataAccess, Business (and UI in small projects)
+       - T4 template + partial classes + custom enums  
+       - partial classes can contain methods with domain logic => domain objects 
+  -- DataAccess - all EF dependent code here
+       - EDMX or code first mapping
+       - Repositories
+       - UnitOfWork
+  -- Business - not every project needs this assembly
+       - Business services 
+       - Logic like workflows
+       - DTOs exposed to UI
+  -- UI
+       - Controllers
+       - Views
+       - ViewModels
+	   
+CRUD WITH PROJ FACADE	  	   
+
+
+------------- OOPS
+polimorphysm
+overload 
+override
+method hidding
+inheritance
+abstract class
+interface
+abstraction vs encapsulation
+
+--------------
+
+method dispatch..static and dynamic - >dyanmic: single and multiple
+design patterns - singletone (is kind of design pattern)
+
+--------------
+byref vs output
+byref vs output with polymorphysm
+byref and out   override using 
+
+--------------C#
+delegates
+string vs string builder
+costant vs static vs readonly
+base/super
+Access modifier
+struct vs class
+virtual method
+partial
+extended methods
+dynamic type
